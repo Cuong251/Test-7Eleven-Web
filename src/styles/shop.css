@@ -171,14 +171,14 @@
 
 /* --- Cart Badge (floating) --- */
 .cart-floating-badge {
-  position:relative; display:inline-flex;
+  position:relative; display:inline-flex; overflow:visible !important; font-size:1.5rem !important; padding:4px 8px !important;
 }
 .cart-badge-count {
-  position:absolute; top:-6px; right:-6px; min-width:18px; height:18px;
+  position:absolute; top:-4px; right:-4px; min-width:20px; height:20px;
   border-radius:var(--radius-full); background:var(--color-accent-red);
-  color:white; font-size:10px; font-weight:700;
+  color:white; font-size:11px; font-weight:700;
   display:flex; align-items:center; justify-content:center;
-  padding:0 4px; animation:scaleIn 0.2s ease;
+  padding:0 4px; animation:scaleIn 0.2s ease; z-index:2;
 }
 
 @media (max-width: 768px) {

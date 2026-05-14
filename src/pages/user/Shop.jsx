@@ -52,7 +52,7 @@ export default function Shop() {
         </div>
         <select className="form-input" value={sortBy} onChange={e => setSortBy(e.target.value)}
           style={{ width: 'auto', minWidth: 150 }}>
-          <option value="default">Sắp xếp</option>
+          <option value="default">Mặc định</option>
           <option value="price-asc">Giá: Thấp → Cao</option>
           <option value="price-desc">Giá: Cao → Thấp</option>
           <option value="name">Tên A-Z</option>
