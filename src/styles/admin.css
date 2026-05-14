@@ -1,0 +1,90 @@
+/* ===== Admin Page Styles ===== */
+
+/* --- Product List --- */
+.product-img-cell { display:flex; align-items:center; gap:var(--space-md); }
+.product-img-thumb {
+  width:44px; height:44px; border-radius:var(--radius-md); object-fit:cover;
+  background:var(--bg-glass); flex-shrink:0;
+}
+.product-img-info { display:flex; flex-direction:column; }
+.product-img-name { font-weight:600; color:var(--text-primary); font-size:var(--font-size-sm); }
+.product-img-sku { font-size:var(--font-size-xs); color:var(--text-muted); }
+.actions-cell { display:flex; gap:var(--space-xs); }
+
+/* --- Product Detail --- */
+.product-detail { animation:fadeInUp 0.4s ease; }
+.product-detail-grid { display:grid; grid-template-columns:1fr 1.2fr; gap:var(--space-xl); }
+.product-detail-image {
+  width:100%; aspect-ratio:1; border-radius:var(--radius-lg);
+  object-fit:cover; background:var(--bg-glass); border:1px solid var(--border-color);
+}
+.product-detail-content { display:flex; flex-direction:column; gap:var(--space-md); }
+.product-detail-category {
+  font-size:var(--font-size-xs); font-weight:600; text-transform:uppercase;
+  letter-spacing:0.08em; color:var(--color-primary-light);
+}
+.product-detail-name { font-size:var(--font-size-3xl); font-weight:800; line-height:1.2; }
+.product-detail-price {
+  font-size:var(--font-size-2xl); font-weight:700;
+  background:linear-gradient(135deg,var(--color-accent-orange),var(--color-accent-orange-light));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.product-detail-desc { color:var(--text-secondary); line-height:1.8; font-size:var(--font-size-sm); }
+.product-detail-meta {
+  display:grid; grid-template-columns:1fr 1fr; gap:var(--space-md);
+  padding:var(--space-lg); background:var(--bg-glass); border-radius:var(--radius-lg);
+  border:1px solid var(--border-color);
+}
+.meta-item-label { font-size:var(--font-size-xs); color:var(--text-muted); margin-bottom:4px; }
+.meta-item-value { font-size:var(--font-size-base); font-weight:600; }
+.product-detail-actions { display:flex; gap:var(--space-sm); margin-top:var(--space-md); }
+
+/* --- Product Form --- */
+.product-form { max-width:700px; animation:fadeInUp 0.4s ease; }
+.product-form .form-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:var(--space-md);
+}
+.product-form .form-full { grid-column:1 / -1; }
+.product-form-card {
+  background:var(--bg-card); border:1px solid var(--border-color);
+  border-radius:var(--radius-lg); padding:var(--space-xl);
+}
+.product-form-section { margin-bottom:var(--space-xl); }
+.product-form-section-title {
+  font-size:var(--font-size-lg); font-weight:600; margin-bottom:var(--space-md);
+  padding-bottom:var(--space-sm); border-bottom:1px solid var(--border-color);
+}
+.image-preview {
+  width:120px; height:120px; border-radius:var(--radius-md); object-fit:cover;
+  background:var(--bg-glass); border:1px solid var(--border-color);
+  margin-top:var(--space-sm);
+}
+
+/* --- Order List --- */
+.order-items-list { display:flex; flex-direction:column; gap:var(--space-sm); }
+.order-item-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--space-sm) var(--space-md); background:var(--bg-glass);
+  border-radius:var(--radius-md); font-size:var(--font-size-sm);
+}
+.order-item-name { font-weight:500; color:var(--text-primary); }
+.order-item-qty { color:var(--text-muted); }
+.order-item-price { font-weight:600; color:var(--color-accent-orange); }
+.order-total-row {
+  display:flex; justify-content:space-between; padding:var(--space-md);
+  border-top:1px solid var(--border-color); margin-top:var(--space-sm);
+  font-weight:700; font-size:var(--font-size-lg);
+}
+.order-customer-info { display:flex; flex-direction:column; gap:4px; }
+.order-customer-name { font-weight:600; color:var(--text-primary); }
+.order-customer-phone { font-size:var(--font-size-xs); color:var(--text-muted); }
+.order-status-select {
+  padding:6px 12px; border-radius:var(--radius-md); font-size:var(--font-size-xs);
+  font-weight:600; border:1px solid var(--border-color); background:var(--bg-glass);
+  color:var(--text-primary); cursor:pointer;
+}
+
+@media (max-width: 768px) {
+  .product-detail-grid { grid-template-columns:1fr; }
+  .product-form .form-grid { grid-template-columns:1fr; }
+}
