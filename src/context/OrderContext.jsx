@@ -1,25 +1,32 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import api from '../services/api';
 
 const OrderContext = createContext();
 
-const API_URL = 'http://localhost:8080/api/orders';
-
 export function OrderProvider({ children }) {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/orders');
+      // Sắp xếp đơn hàng mới nhất lên đầu
+      const sorted = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setOrders(sorted);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => {
-        // Sort orders by createdAt descending
-        const sortedOrders = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setOrders(sortedOrders);
-      })
-      .catch(err => console.error('Failed to fetch orders', err));
+    fetchOrders();
   }, []);
 
   const createOrder = async (customerInfo, cartItems, total) => {
-    const newOrderPayload = {
+    const orderData = {
       customerName: customerInfo.name,
       customerPhone: customerInfo.phone,
       customerAddress: customerInfo.address,
@@ -34,35 +41,28 @@ export function OrderProvider({ children }) {
     };
 
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newOrderPayload)
-      });
-      const newOrder = await res.json();
-      setOrders(prev => [newOrder, ...prev]);
-      return newOrder;
-    } catch (err) {
-      console.error('Failed to create order', err);
+      const response = await api.post('/orders', orderData);
+      setOrders(prev => [response.data, ...prev]);
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi tạo đơn hàng:', error);
+      throw error;
     }
   };
 
   const updateOrderStatus = async (orderId, status) => {
     try {
-      const res = await fetch(`${API_URL}/${orderId}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
-      });
-      const updatedOrder = await res.json();
-      setOrders(prev => prev.map(o => o.id === orderId ? updatedOrder : o));
-    } catch (err) {
-      console.error('Failed to update order status', err);
+      const response = await api.put(`/orders/${orderId}/status`, { status });
+      setOrders(prev => prev.map(o => o.id === orderId ? response.data : o));
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
+      throw error;
     }
   };
 
   return (
-    <OrderContext.Provider value={{ orders, createOrder, updateOrderStatus }}>
+    <OrderContext.Provider value={{ orders, loading, fetchOrders, createOrder, updateOrderStatus }}>
       {children}
     </OrderContext.Provider>
   );

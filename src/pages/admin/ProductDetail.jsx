@@ -23,9 +23,13 @@ export default function ProductDetail() {
 
   const stockStatus = getStockStatus(product.stock);
 
-  const handleDelete = () => {
-    deleteProduct(product.id);
-    navigate('/admin/products');
+  const handleDelete = async () => {
+    try {
+      await deleteProduct(product.id);
+      navigate('/admin/products');
+    } catch (error) {
+      alert('Lỗi khi xóa sản phẩm!');
+    }
   };
 
   return (

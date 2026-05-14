@@ -16,10 +16,14 @@ export default function ProductList() {
     (currentPage - 1) * itemsPerPage, currentPage * itemsPerPage
   );
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      deleteProduct(deleteId);
-      setDeleteId(null);
+      try {
+        await deleteProduct(deleteId);
+        setDeleteId(null);
+      } catch (error) {
+        alert('Lỗi khi xóa sản phẩm!');
+      }
     }
   };
 

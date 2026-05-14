@@ -55,12 +55,16 @@ export default function Checkout() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    const order = createOrder(form, cartItems, cartTotal);
-    clearCart();
-    setOrderSuccess(order);
+    try {
+      const order = await createOrder(form, cartItems, cartTotal);
+      clearCart();
+      setOrderSuccess(order);
+    } catch (error) {
+      alert('Lỗi khi đặt hàng!');
+    }
   };
 
   return (

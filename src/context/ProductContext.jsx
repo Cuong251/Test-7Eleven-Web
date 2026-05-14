@@ -1,56 +1,59 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import api from '../services/api';
 
 const ProductContext = createContext();
 
-const API_URL = 'http://localhost:8080/api/products';
-
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('Tất cả');
 
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/products');
+      setProducts(response.data);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách sản phẩm:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.error('Failed to fetch products', err));
+    fetchProducts();
   }, []);
 
-  const addProduct = async (product) => {
+  const addProduct = async (productData) => {
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
-      });
-      const newProduct = await res.json();
-      setProducts(prev => [newProduct, ...prev]);
-      return newProduct;
-    } catch (err) {
-      console.error('Failed to add product', err);
+      const response = await api.post('/products', productData);
+      setProducts(prev => [response.data, ...prev]);
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi thêm sản phẩm:', error);
+      throw error;
     }
   };
 
   const updateProduct = async (id, updates) => {
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
-      });
-      const updatedProduct = await res.json();
-      setProducts(prev => prev.map(p => p.id === Number(id) ? updatedProduct : p));
-    } catch (err) {
-      console.error('Failed to update product', err);
+      const response = await api.put(`/products/${id}`, updates);
+      setProducts(prev => prev.map(p => p.id === Number(id) ? response.data : p));
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi cập nhật sản phẩm:', error);
+      throw error;
     }
   };
 
   const deleteProduct = async (id) => {
     try {
-      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      await api.delete(`/products/${id}`);
       setProducts(prev => prev.filter(p => p.id !== Number(id)));
-    } catch (err) {
-      console.error('Failed to delete product', err);
+    } catch (error) {
+      console.error('Lỗi khi xóa sản phẩm:', error);
+      throw error;
     }
   };
 
@@ -64,9 +67,11 @@ export function ProductProvider({ children }) {
 
   return (
     <ProductContext.Provider value={{
-      products, filteredProducts, searchTerm, setSearchTerm,
+      products, filteredProducts, loading,
+      searchTerm, setSearchTerm,
       filterCategory, setFilterCategory,
-      addProduct, updateProduct, deleteProduct, getProduct
+      addProduct, updateProduct, deleteProduct, getProduct,
+      fetchProducts
     }}>
       {children}
     </ProductContext.Provider>

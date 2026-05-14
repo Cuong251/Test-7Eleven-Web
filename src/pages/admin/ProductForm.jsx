@@ -49,7 +49,7 @@ export default function ProductForm() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -62,12 +62,16 @@ export default function ProductForm() {
       image: form.image.trim() || 'https://via.placeholder.com/400?text=7-Eleven',
     };
 
-    if (isEdit) {
-      updateProduct(id, productData);
-      navigate(`/admin/products/${id}`);
-    } else {
-      const newProduct = addProduct(productData);
-      navigate(`/admin/products/${newProduct.id}`);
+    try {
+      if (isEdit) {
+        await updateProduct(id, productData);
+        navigate(`/admin/products/${id}`);
+      } else {
+        const newProduct = await addProduct(productData);
+        navigate(`/admin/products/${newProduct.id}`);
+      }
+    } catch (error) {
+      alert('Có lỗi xảy ra khi lưu sản phẩm!');
     }
   };
 
