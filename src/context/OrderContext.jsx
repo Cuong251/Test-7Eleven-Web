@@ -1,24 +1,25 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { initialOrders } from '../data/mockData';
-import { generateOrderId } from '../utils/helpers';
 
 const OrderContext = createContext();
 
-const STORAGE_KEY = '7eleven_orders';
+const API_URL = 'http://localhost:8080/api/orders';
 
 export function OrderProvider({ children }) {
-  const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : initialOrders;
-  });
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-  }, [orders]);
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        // Sort orders by createdAt descending
+        const sortedOrders = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setOrders(sortedOrders);
+      })
+      .catch(err => console.error('Failed to fetch orders', err));
+  }, []);
 
-  const createOrder = (customerInfo, cartItems, total) => {
-    const newOrder = {
-      id: generateOrderId(),
+  const createOrder = async (customerInfo, cartItems, total) => {
+    const newOrderPayload = {
       customerName: customerInfo.name,
       customerPhone: customerInfo.phone,
       customerAddress: customerInfo.address,
@@ -30,14 +31,34 @@ export function OrderProvider({ children }) {
       })),
       total,
       status: 'pending',
-      createdAt: new Date().toISOString(),
     };
-    setOrders(prev => [newOrder, ...prev]);
-    return newOrder;
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOrderPayload)
+      });
+      const newOrder = await res.json();
+      setOrders(prev => [newOrder, ...prev]);
+      return newOrder;
+    } catch (err) {
+      console.error('Failed to create order', err);
+    }
   };
 
-  const updateOrderStatus = (orderId, status) => {
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+  const updateOrderStatus = async (orderId, status) => {
+    try {
+      const res = await fetch(`${API_URL}/${orderId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      const updatedOrder = await res.json();
+      setOrders(prev => prev.map(o => o.id === orderId ? updatedOrder : o));
+    } catch (err) {
+      console.error('Failed to update order status', err);
+    }
   };
 
   return (
