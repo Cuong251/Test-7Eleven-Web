@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
+import { formatPrice, transformUnsplashUrl } from '../../utils/helpers';
 import { categories } from '../../data/mockData';
 
 export default function ProductForm() {
@@ -35,7 +36,8 @@ export default function ProductForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    const finalValue = name === 'image' ? transformUnsplashUrl(value) : value;
+    setForm(prev => ({ ...prev, [name]: finalValue }));
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 

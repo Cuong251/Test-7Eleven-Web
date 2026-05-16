@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useOrders } from '../../context/OrderContext';
 import { formatPrice, formatDate, getStatusInfo } from '../../utils/helpers';
+import Pagination from '../../components/UI/Pagination';
 
 const statusOptions = [
   { value: 'all', label: 'Tất cả' },
@@ -14,10 +15,18 @@ export default function OrderList() {
   const { orders, updateOrderStatus } = useOrders();
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredOrders = filterStatus === 'all'
     ? orders
     : orders.filter(o => o.status === filterStatus);
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const totalRevenue = orders
     .filter(o => o.status === 'delivered')
@@ -70,7 +79,7 @@ export default function OrderList() {
           {statusOptions.map(opt => (
             <button key={opt.value}
               className={`filter-tab ${filterStatus === opt.value ? 'active' : ''}`}
-              onClick={() => setFilterStatus(opt.value)}>
+              onClick={() => { setFilterStatus(opt.value); setCurrentPage(1); }}>
               {opt.label}
             </button>
           ))}
@@ -78,66 +87,74 @@ export default function OrderList() {
       </div>
 
       {/* Table */}
-      {filteredOrders.length > 0 ? (
-        <div className="table-container">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Mã đơn</th>
-                <th>Khách hàng</th>
-                <th>Sản phẩm</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
-                <th>Ngày tạo</th>
-                <th>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className="stagger-children">
-              {filteredOrders.map(order => {
-                const statusInfo = getStatusInfo(order.status);
-                return (
-                  <tr key={order.id}>
-                    <td><span style={{ fontWeight: 700, color: 'var(--color-primary-light)' }}>{order.id}</span></td>
-                    <td>
-                      <div className="order-customer-info">
-                        <span className="order-customer-name">{order.customerName}</span>
-                        <span className="order-customer-phone">{order.customerPhone}</span>
-                      </div>
-                    </td>
-                    <td style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-xs)' }}>
-                      {order.items.length} sản phẩm
-                    </td>
-                    <td style={{ fontWeight: 600, color: 'var(--color-accent-orange)' }}>
-                      {formatPrice(order.total)}
-                    </td>
-                    <td>
-                      <span className={`badge ${statusInfo.className}`}>
-                        <span className="badge-dot" />
-                        {statusInfo.label}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
-                      {formatDate(order.createdAt)}
-                    </td>
-                    <td>
-                      <div className="actions-cell">
-                        <button className="btn btn-ghost btn-sm" onClick={() => setSelectedOrder(order)}>👁️</button>
-                        <select className="order-status-select"
-                          value={order.status}
-                          onChange={e => updateOrderStatus(order.id, e.target.value)}>
-                          <option value="pending">Chờ xác nhận</option>
-                          <option value="confirmed">Đã xác nhận</option>
-                          <option value="delivered">Đã giao</option>
-                          <option value="cancelled">Đã hủy</option>
-                        </select>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+      {paginatedOrders.length > 0 ? (
+        <>
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Sản phẩm</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày tạo</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="stagger-children">
+                {paginatedOrders.map(order => {
+                  const statusInfo = getStatusInfo(order.status);
+                  return (
+                    <tr key={order.id}>
+                      <td><span style={{ fontWeight: 700, color: 'var(--color-primary-light)' }}>{order.id}</span></td>
+                      <td>
+                        <div className="order-customer-info">
+                          <span className="order-customer-name">{order.customerName}</span>
+                          <span className="order-customer-phone">{order.customerPhone}</span>
+                        </div>
+                      </td>
+                      <td style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-xs)' }}>
+                        {order.items.length} sản phẩm
+                      </td>
+                      <td style={{ fontWeight: 600, color: 'var(--color-accent-orange)' }}>
+                        {formatPrice(order.total)}
+                      </td>
+                      <td>
+                        <span className={`badge ${statusInfo.className}`}>
+                          <span className="badge-dot" />
+                          {statusInfo.label}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
+                        {formatDate(order.createdAt)}
+                      </td>
+                      <td>
+                        <div className="actions-cell">
+                          <button className="btn btn-ghost btn-sm" onClick={() => setSelectedOrder(order)}>👁️</button>
+                          <select className="order-status-select"
+                            value={order.status}
+                            onChange={e => updateOrderStatus(order.id, e.target.value)}>
+                            <option value="pending">Chờ xác nhận</option>
+                            <option value="confirmed">Đã xác nhận</option>
+                            <option value="delivered">Đã giao</option>
+                            <option value="cancelled">Đã hủy</option>
+                          </select>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            onPageChange={setCurrentPage} 
+          />
+        </>
       ) : (
         <div className="empty-state">
           <div className="empty-state-icon">📋</div>

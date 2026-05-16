@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
 import { formatPrice, getStockStatus } from '../../utils/helpers';
 import { categories } from '../../data/mockData';
+import Pagination from '../../components/UI/Pagination';
 
 export default function ProductList() {
   const { filteredProducts, searchTerm, setSearchTerm, filterCategory, setFilterCategory, deleteProduct } = useProducts();
@@ -153,19 +154,11 @@ export default function ProductList() {
             </table>
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button className="pagination-btn" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>‹</button>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button key={i + 1} className={`pagination-btn ${currentPage === i + 1 ? 'active' : ''}`}
-                  onClick={() => setCurrentPage(i + 1)}>
-                  {i + 1}
-                </button>
-              ))}
-              <button className="pagination-btn" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>›</button>
-            </div>
-          )}
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            onPageChange={setCurrentPage} 
+          />
         </>
       ) : (
         <div className="empty-state">

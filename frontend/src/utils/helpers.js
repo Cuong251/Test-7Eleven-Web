@@ -29,3 +29,14 @@ export const generateOrderId = () => {
   const num = Math.floor(Math.random() * 9000) + 1000;
   return `ORD-${num}`;
 };
+export const transformUnsplashUrl = (url) => {
+  if (!url) return '';
+  if (url.includes('unsplash.com/photos/')) {
+    const parts = url.split('/');
+    const lastPart = parts[parts.length - 1];
+    // Unsplash IDs are often at the end, sometimes preceded by a slug and a hyphen
+    const id = lastPart.includes('-') ? lastPart.split('-').pop() : lastPart;
+    return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=80`;
+  }
+  return url;
+};
