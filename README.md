@@ -1,4 +1,4 @@
-## 📂 Cấu Trúc Thư Mục Dự Án (Project Structure)
+## Cấu Trúc Thư Mục Dự Án (Project Structure)
 
 ```text
 Test-7Eleven-Web/
@@ -23,10 +23,10 @@ Test-7Eleven-Web/
 
 ---
 
-## 💻 Hướng Dẫn Cài Đặt và Khởi Chạy
+## Hướng Dẫn Cài Đặt và Khởi Chạy
 
 Bạn có thể chạy dự án này bằng một trong hai cách dưới đây:
-### 🐳 Cách 1: Chạy bằng Docker Compose
+### Cách 1: Chạy bằng Docker Compose
 Yêu cầu hệ thống đã cài đặt sẵn **Docker** và ứng dụng **Docker Desktop** đang hoạt động.
 
 1. **Mở Terminal và di chuyển vào thư mục dự án:**
@@ -51,13 +51,13 @@ Yêu cầu hệ thống đã cài đặt sẵn **Docker** và ứng dụng **Doc
 
 ---
 
-### ⚙️ Cách 2: Chạy thủ công trên môi trường Local
+### Cách 2: Chạy thủ công trên môi trường Local
 
 #### Bước 1: Chuẩn bị Cơ sở dữ liệu PostgreSQL
 1. Tạo một cơ sở dữ liệu mới trong PostgreSQL của bạn có tên là `seven_eleven_db`.
 2. Đảm bảo PostgreSQL chạy ở cổng `5434` (hoặc cổng mặc định `5432` của bạn).
 
-##### 🔑 Thông số kết nối Database chi tiết:
+##### Thông số kết nối Database chi tiết:
 
 | Thông số | Chạy Local (Thủ công) | Chạy Docker Compose |
 | :--- | :--- | :--- |
